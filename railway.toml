@@ -1,0 +1,62 @@
+# railway.toml - Configuração para deploy do Kaneo no Railway
+
+#
+# Configuração do Backend
+#
+[services.backend]
+name = "kaneo-backend"
+source = "github"
+github_url = "[https://github.com/gguip/kaneo"](https://github.com/gguip/kaneo")
+
+# Construção da imagem
+[services.backend.build]
+builder = "DOCKERFILE"
+dockerfilePath = "apps/api/Dockerfile"
+watchPatterns = ["apps/api/**"]
+
+# Variáveis de ambiente
+[services.backend.envs]
+JWT_ACCESS = "change_me"
+DB_PATH = "/app/apps/api/data/kaneo.db"
+
+# Configuração de rede
+[services.backend.ports]
+http = "1337:1337"
+
+# Configuração do volume
+[services.backend.volumes.sqlite_data]
+path = "/app/apps/api/data"
+mount_path = "/app/apps/api/data"
+type = "volume"
+
+# Política de reinicialização
+[services.backend.deploy]
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+#
+# Configuração do Frontend
+#
+[services.frontend]
+name = "kaneo-frontend"
+source = "github"
+github_url = "[https://github.com/gguip/kaneo"](https://github.com/gguip/kaneo")
+
+# Construção da imagem
+[services.frontend.build]
+builder = "DOCKERFILE"
+dockerfilePath = "apps/web/Dockerfile"
+watchPatterns = ["apps/web/**"]
+
+# Variáveis de ambiente - URL do backend será preenchida após o deploy
+[services.frontend.envs]
+KANEO_API_URL = "${services.backend.domains[0]}"
+
+# Configuração de rede
+[services.frontend.ports]
+http = "80:80"
+
+# Política de reinicialização
+[services.frontend.deploy]
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5
