@@ -25,10 +25,11 @@ path = "/app/apps/api/data"
 mount_path = "/app/apps/api/data"
 type = "volume"
 
-# Política de reinicialização
+# Comando de inicialização explícito e política de reinicialização
 [services.backend.deploy]
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
+startCommand = "node /app/apps/api/dist/main.js"
 
 #
 # Configuração do Frontend
@@ -42,13 +43,14 @@ name = "ghcr.io/usekaneo/web:latest"
 
 # Variáveis de ambiente
 [services.frontend.envs]
-KANEO_API_URL = "[http://kaneo-backend.railway.internal](http://kaneo-backend.railway.internal):1337"
+KANEO_API_URL = "http://kaneo-backend.railway.internal:1337"
 
 # Configuração de rede
 [services.frontend.ports]
 http = "80:80"
 
-# Política de reinicialização
+# Comando de inicialização explícito e política de reinicialização
 [services.frontend.deploy]
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 5
+startCommand = "nginx -g 'daemon off;'"
