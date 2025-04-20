@@ -5,14 +5,10 @@
 #
 [services.backend]
 name = "kaneo-backend"
-source = "github"
-github_url = "[https://github.com/gguip/kaneo"](https://github.com/gguip/kaneo")
 
-# Construção da imagem
-[services.backend.build]
-builder = "DOCKERFILE"
-dockerfilePath = "apps/api/Dockerfile"
-watchPatterns = ["apps/api/**"]
+# Usar imagem pré-construída em vez de construir do Dockerfile
+[services.backend.image]
+name = "ghcr.io/usekaneo/api:latest"
 
 # Variáveis de ambiente
 [services.backend.envs]
@@ -24,7 +20,7 @@ DB_PATH = "/app/apps/api/data/kaneo.db"
 http = "1337:1337"
 
 # Configuração do volume
-[services.backend.volumes.sqlite_data]
+[[services.backend.volumes]]
 path = "/app/apps/api/data"
 mount_path = "/app/apps/api/data"
 type = "volume"
@@ -39,18 +35,14 @@ restartPolicyMaxRetries = 10
 #
 [services.frontend]
 name = "kaneo-frontend"
-source = "github"
-github_url = "[https://github.com/gguip/kaneo"](https://github.com/gguip/kaneo")
 
-# Construção da imagem
-[services.frontend.build]
-builder = "DOCKERFILE"
-dockerfilePath = "apps/web/Dockerfile"
-watchPatterns = ["apps/web/**"]
+# Usar imagem pré-construída
+[services.frontend.image]
+name = "ghcr.io/usekaneo/web:latest"
 
-# Variáveis de ambiente - URL do backend será preenchida após o deploy
+# Variáveis de ambiente
 [services.frontend.envs]
-KANEO_API_URL = "${services.backend.domains[0]}"
+KANEO_API_URL = "[http://kaneo-backend.railway.internal](http://kaneo-backend.railway.internal):1337"
 
 # Configuração de rede
 [services.frontend.ports]
