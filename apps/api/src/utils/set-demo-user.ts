@@ -13,7 +13,7 @@ async function setDemoUser(set: { cookie?: Record<string, ElysiaCookie> }) {
       httpOnly: true,
       path: "/",
       secure: true,
-      sameSite: "lax",
+      sameSite: "none",
       expires: expiresAt,
     },
   };

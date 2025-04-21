@@ -26,8 +26,8 @@ const user = new Elysia({ prefix: "/user" })
           value: token,
           httpOnly: true,
           path: "/",
-          secure: isInSecureMode(request),
-          sameSite: "lax",
+          secure: true,
+          sameSite: "none",
           expires: session.expiresAt,
         },
       };
@@ -55,8 +55,8 @@ const user = new Elysia({ prefix: "/user" })
           value: token,
           httpOnly: true,
           path: "/",
-          secure: isInSecureMode(request),
-          sameSite: "lax",
+          secure: true,
+          sameSite: "none",
           expires: session.expiresAt,
         },
       };
