@@ -28,7 +28,6 @@ const user = new Elysia({ prefix: "/user" })
           path: "/",
           secure: true,
           sameSite: "none",
-          domain: "kaneo-production.up.railway.app",
           expires: session.expiresAt,
         },
       };
@@ -58,7 +57,6 @@ const user = new Elysia({ prefix: "/user" })
           path: "/",
           secure: true,
           sameSite: "none",
-          domain: "kaneo-production.up.railway.app",
           expires: session.expiresAt,
         },
       };
