@@ -18,7 +18,11 @@ const isDemoMode = process.env.DEMO_MODE === "true";
 
 const app = new Elysia()
   .state("userEmail", "")
-  .use(cors())
+  .use(cors({
+    origin: ["[https://kaneo-web.vercel.app/](https://kaneo-web.vercel.app/)", "http://localhost:5173"], // Mais seguro para produção
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    credentials: true
+  }))
   .use(user)
   .use(
     cron({
@@ -32,7 +36,7 @@ const app = new Elysia()
           await purgeData();
         }
       },
-    }),
+    })
   )
   .guard({
     async beforeHandle({ store, cookie: { session }, set }) {
@@ -42,7 +46,7 @@ const app = new Elysia()
         }
 
         const { user, session: validatedSession } = await validateSessionToken(
-          session.value ?? "",
+          session.value ?? ""
         );
 
         if (!user || !validatedSession) {
@@ -56,7 +60,7 @@ const app = new Elysia()
         }
 
         const { user, session: validatedSession } = await validateSessionToken(
-          session.value,
+          session.value
         );
 
         if (!user || !validatedSession) {
