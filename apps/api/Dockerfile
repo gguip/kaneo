@@ -6,7 +6,6 @@ WORKDIR /app
 
 # Copie apenas os arquivos necessários para a API
 COPY package.json .
-COPY bun.lockb .
 COPY tsconfig.json .
 COPY src/ ./src/
 COPY drizzle/ ./drizzle/
