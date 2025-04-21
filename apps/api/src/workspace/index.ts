@@ -9,25 +9,10 @@ import updateWorkspace from "./controllers/update-workspace";
 
 const workspace = new Elysia({ prefix: "/workspace" })
   .state("userEmail", "")
-  .guard({
-    async beforeHandle({ store, cookie: { session }, set }) {
-      if (!session?.value) {
-        return { user: null };
-      }
 
-      const { user } = await validateSessionToken(session.value);
-
-      if (!user) {
-        return { user: null };
-      }
-
-      store.userEmail = user.email;
-    }
-  })
   .post(
     "/create",
-    async ({ body: { name }, store }) => {
-      const userEmail = store.userEmail;
+    async ({ body: { name }, userEmail }) => {
       const createdWorkspace = await createWorkspace(name, userEmail);
       return createdWorkspace;
     },
@@ -37,21 +22,18 @@ const workspace = new Elysia({ prefix: "/workspace" })
       }),
     },
   )
-  .get("/list", async ({ store }) => {
-    const userEmail = store.userEmail;
+  .get("/list", async ({ userEmail }) => {
     const workspaces = await getWorkspaces(userEmail);
     return workspaces;
   })
-  .get("/:id", async ({ store, params }) => {
-    const userEmail = store.userEmail;
+  .get("/:id", async ({ userEmail, params }) => {
     const workspace = await getWorkspace(userEmail, params.id);
     return workspace;
   })
   .use(requireWorkspacePermission("owner"))
   .put(
     "/:id",
-    async ({ store, params, body }) => {
-      const userEmail = store.userEmail;
+    async ({ userEmail, params, body }) => {
       const updatedWorkspace = await updateWorkspace(
         userEmail,
         params.id,

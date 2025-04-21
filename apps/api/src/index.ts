@@ -19,7 +19,7 @@ const isDemoMode = process.env.DEMO_MODE === "true";
 const app = new Elysia()
   .state("userEmail", "")
   .use(cors({
-    origin: "https://kaneo-web.vercel.app",
+    origin: ["https://kaneo-web.vercel.app", "http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
@@ -40,46 +40,36 @@ const app = new Elysia()
       },
     })
   )
-  .guard({
-    async beforeHandle({ store, cookie: { session }, set }) {
-      if (isDemoMode) {
-        if (!session?.value) {
-          await setDemoUser(set);
-        }
-
-        const { user, session: validatedSession } = await validateSessionToken(
-          session.value ?? ""
-        );
-
-        if (!user || !validatedSession) {
-          await setDemoUser(set);
-        }
-
-        store.userEmail = user?.email ?? "";
-      } else {
-        if (!session?.value) {
-          return { user: null };
-        }
-
-        const { user, session: validatedSession } = await validateSessionToken(
-          session.value
-        );
-
-        if (!user || !validatedSession) {
-          return { user: null };
-        }
-
-        store.userEmail = user.email;
+  .derive(async ({ cookie: { session }, set }) => {
+    let currentUser = null;
+    
+    if (isDemoMode) {
+      if (!session?.value) {
+        await setDemoUser(set);
       }
-    },
-  })
-  .get("/me", async ({ cookie: { session } }) => {
-    const { user } = await validateSessionToken(session.value ?? "");
 
-    if (user === null) {
-      return { user: null };
+      const { user, session: validatedSession } = await validateSessionToken(
+        session.value ?? ""
+      );
+
+      if (!user || !validatedSession) {
+        await setDemoUser(set);
+      } else {
+        currentUser = user;
+      }
+    } else {
+      if (session?.value) {
+        const { user } = await validateSessionToken(session.value);
+        currentUser = user;
+      }
     }
-
+    
+    return {
+      user: currentUser,
+      userEmail: currentUser?.email ?? ""
+    };
+  })
+  .get("/me", async ({ user }) => {
     return { user };
   })
   .use(workspace)
