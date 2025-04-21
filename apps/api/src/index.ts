@@ -19,7 +19,7 @@ const isDemoMode = process.env.DEMO_MODE === "true";
 const app = new Elysia()
   .state("userEmail", "")
   .use(cors({
-    origin: ["[https://kaneo-web.vercel.app/](https://kaneo-web.vercel.app/)", "http://localhost:5173"], // Mais seguro para produção
+    origin: ["[https://kaneo-web.vercel.app](https://kaneo-web.vercel.app)", "http://localhost:5173"], 
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true
   }))
