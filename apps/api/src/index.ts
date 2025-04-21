@@ -18,17 +18,8 @@ const isDemoMode = process.env.DEMO_MODE === "true";
 
 const app = new Elysia()
   .state("userEmail", "")
-  // Configuração global de cookies
-  .config({
-    cookie: {
-      secrets: process.env.JWT_ACCESS ? [process.env.JWT_ACCESS] : undefined,
-      httpOnly: true,
-      secure: true,
-      sameSite: "none"
-    }
-  })
   .use(cors({
-    origin: "[https://kaneo-web.vercel.app](https://kaneo-web.vercel.app)",
+    origin: "https://kaneo-web.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
