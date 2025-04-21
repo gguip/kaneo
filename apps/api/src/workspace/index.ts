@@ -1,5 +1,6 @@
 import Elysia, { t } from "elysia";
 import { requireWorkspacePermission } from "../middleware/check-permissions";
+import { validateSessionToken } from "../user/controllers/validate-session-token";
 import createWorkspace from "./controllers/create-workspace";
 import deleteWorkspace from "./controllers/delete-workspace";
 import getWorkspace from "./controllers/get-workspace";
@@ -8,6 +9,21 @@ import updateWorkspace from "./controllers/update-workspace";
 
 const workspace = new Elysia({ prefix: "/workspace" })
   .state("userEmail", "")
+  .guard({
+    async beforeHandle({ store, cookie: { session }, set }) {
+      if (!session?.value) {
+        return { user: null };
+      }
+
+      const { user } = await validateSessionToken(session.value);
+
+      if (!user) {
+        return { user: null };
+      }
+
+      store.userEmail = user.email;
+    }
+  })
   .post(
     "/create",
     async ({ body: { name }, store }) => {
